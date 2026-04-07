@@ -10,9 +10,9 @@ function Footer() {
       <div className="flex justify-center bg-indigo-900 text-white">
         <div className="container flex flex-col items-center py-4">
           <p className="text-xl font-bold">
-            Blog Pessoal Generation | Copyright: {data}
+            Blog Pessoal de Ana Beatriz Carvalho | Copyright: {data}
           </p>
-          <p className="text-lg">Acesse nossas Redes Sociais</p>
+          <p className="text-lg">Acesse minhas Redes Sociais</p>
           <div className='flex gap-2'>  
     <a href="https://www.linkedin.com/in/ana-beatriz-carvalho-esmaile/" target="_blank">  
         <LinkedinLogoIcon size={48} weight='bold' />  
