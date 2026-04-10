@@ -46,12 +46,12 @@ function Login() {
                 >
                     <h2 className="text-slate-900 text-5xl ">Entrar</h2>
                     <div className="flex flex-col w-full">
-                        <label htmlFor="usuario">Usuário</label>
+                        <label htmlFor="usuario">Usuário - (e-mail)</label>
                         <input
                             type="text"
                             id="usuario"
                             name="usuario"
-                            placeholder="Usuario"
+                            placeholder="Insira seu e-mail"
                             className="border-2 border-slate-700 rounded p-2"
                             value={usuarioLogin.usuario}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
@@ -63,7 +63,7 @@ function Login() {
                             type="password"
                             id="senha"
                             name="senha"
-                            placeholder="Senha"
+                            placeholder="Insira a senha"
                             className="border-2 border-slate-700 rounded p-2"
                             value={usuarioLogin.senha}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}

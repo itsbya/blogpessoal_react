@@ -48,7 +48,7 @@ function DeletarTema() {
     // Cria um useEffect para monitorar o token
     useEffect( () => {
         if(token === ''){
-            alert('Você precisa estar logado!');
+            ToastAlerta('Você precisa estar logado!');
             navigate('/')
         }
     }, [token])
@@ -74,7 +74,7 @@ function DeletarTema() {
                 headers: { Authorization: token }
             });
 
-            alert('Tema deletado com sucesso!')
+            ToastAlerta('Tema deletado com sucesso!')
         
         }catch(error: any){
             if(error.toString().includes('401')){
