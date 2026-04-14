@@ -5,6 +5,7 @@ import { AuthContext } from "../../../contexts/AuthContext";
 import type Tema from "../../../models/Tema";
 import { buscar, atualizar, cadastrar } from "../../../services/Service";
 import type Postagem from "../../../models/Postagem";
+import { ToastAlerta } from "../../../utils/ToastAlerta";
 
  function FormPostagem() {  
 
@@ -21,7 +22,9 @@ const [postagem, setPostagem] = useState<Postagem>({} as Postagem);
 const { id } = useParams<{ id: string }>();  
   
 const { usuario, handleLogout } = useContext(AuthContext);  
+
 const token = usuario.token;  
+
   
 async function buscarPostagemPorId(id: string) {  
   try {  
@@ -34,7 +37,8 @@ async function buscarPostagemPorId(id: string) {
     }  
   }  
 }  
-  
+
+
 async function buscarTemaPorId(id: string) {  
   try {  
     await buscar(`/temas/${id}`, setTema, {  
@@ -47,6 +51,8 @@ async function buscarTemaPorId(id: string) {
   }  
 }  
   
+
+
 async function buscarTemas() {  
   try {  
     await buscar("/temas", setTemas, {  
@@ -59,20 +65,23 @@ async function buscarTemas() {
   }  
 }  
   
+
 useEffect(() => {  
   if (token === "") {  
-    ToastAlerta("Você precisa estar logado");  
+    ToastAlerta("Você precisa estar logado", "info");  
     navigate("/");  
   }  
 }, [token]);  
-  
+
+
 useEffect(() => {  
   buscarTemas();  
   if (id !== undefined) {  
     buscarPostagemPorId(id);  
   }  
 }, [id]);  
-  
+
+
 useEffect(() => {  
   setPostagem((postagem) => {  
     return {  
@@ -82,6 +91,7 @@ useEffect(() => {
   });  
 }, [tema]);  
   
+
 function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {  
   setPostagem({  
     ...postagem,  
@@ -104,12 +114,12 @@ async function gerarNovaPostagem(e: SyntheticEvent<HTMLFormElement>) {
       await atualizar(`/postagens`, postagem, setPostagem, {  
         headers: { Authorization: token },  
       });  
-      ToastAlerta("Postagem atualizada com sucesso");  
+      ToastAlerta("Postagem atualizada com sucesso", "sucesso");  
     } catch (error: any) {  
       if (error.toString().includes("401")) {  
         handleLogout();  
       } else {  
-        ToastAlerta("Erro ao atualizar a Postagem");  
+        ToastAlerta("Erro ao atualizar a Postagem", "erro");  
       }  
     }  
   } else {  
@@ -117,12 +127,12 @@ async function gerarNovaPostagem(e: SyntheticEvent<HTMLFormElement>) {
       await cadastrar("/postagens", postagem, setPostagem, {  
         headers: { Authorization: token },  
       });  
-      ToastAlerta("Postagem cadastrada com sucesso");  
+      ToastAlerta("Postagem cadastrada com sucesso", "sucesso");  
     } catch (error: any) {  
       if (error.toString().includes("401")) {  
         handleLogout();  
       } else {  
-        ToastAlerta("Erro ao cadastrar a Postagem");  
+        ToastAlerta("Erro ao cadastrar a Postagem", "erro");  
       }  
     }  
   }  

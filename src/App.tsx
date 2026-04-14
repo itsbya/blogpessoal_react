@@ -40,7 +40,7 @@ function App() {
               <Route path="/editarpostagem/:id" element={<FormPostagem />} />
               <Route path="/deletarpostagem/:id" element={<DeletarPostagem />} />
               <Route path="/perfil" element={<Perfil />} />
-              <Route path="/atualizarperfil" element={<AtualizarPerfil />} />
+              <Route path="/atualizarusuario" element={<AtualizarPerfil />} />
             </Routes>
           </div>
           <Footer />

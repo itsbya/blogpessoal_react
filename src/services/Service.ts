@@ -2,7 +2,8 @@ import axios from "axios";
 
 // Cria uma nova instância do Axios
 const api = axios.create({
-  baseURL: 'https://blogpessoal-c3pp.onrender.com'
+  baseURL: import.meta.env.VITE_API_URL
+  
 })
 
 // Função para Cadastrar Usuário
