@@ -1,49 +1,84 @@
-import { Link } from 'react-router-dom'
-import type Postagem from '../../../models/Postagem'
+import { Link } from "react-router-dom";
+import type Postagem from "../../../models/Postagem";
+import { motion } from "framer-motion";
+import { CalendarBlank, User, Tag, Pencil, Trash } from "@phosphor-icons/react";
 
 interface CardPostagensProps {
-    postagem: Postagem
+  postagem: Postagem;
 }
 
 function CardPostagem({ postagem }: CardPostagensProps) {
-    return (
-        <div className='border-slate-900 border 
-            flex flex-col rounded overflow-hidden justify-between'>
-                
+  const formattedDate = new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(postagem.data));
+
+  return (
+    <motion.div
+      whileHover={{ y: -5 }}
+      className="glass-card flex flex-col h-full overflow-hidden"
+    >
+      <div className="p-6 flex-1 flex flex-col gap-4">
+        {/* Header: Author & Date */}
+        <div className="flex justify-between items-start">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <img
+                src={postagem.usuario?.foto || "https://i.imgur.com/8RK9k6v.png"}
+                className="h-10 w-10 rounded-full border border-white/10 object-cover"
+                alt={postagem.usuario?.nome}
+              />
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-bg-dark rounded-full" />
+            </div>
             <div>
-                <div className="flex w-full bg-indigo-400 py-2 px-4 items-center gap-4">
-                    <img
-                        src={postagem.usuario?.foto}
-                        className='h-12 rounded-full'
-                        alt={postagem.usuario?.nome} />
-                    <h3 className='text-lg font-bold text-center uppercase'>
-                        {postagem.usuario?.nome}
-                    </h3>
-                </div>
-                <div className='p-4 '>
-                    <h4 className='text-lg font-semibold uppercase'>{postagem.titulo}</h4>
-                    <p>{postagem.texto}</p>
-                    <p>Tema: {postagem.tema?.descricao}</p>
-                    <p>Data: {new Intl.DateTimeFormat("pt-BR", {
-                        dateStyle: 'full',
-                        timeStyle: 'medium',
-                    }).format(new Date(postagem.data))}</p>
-                </div>
+              <p className="text-sm font-bold text-zinc-100 line-clamp-1">
+                {postagem.usuario?.nome}
+              </p>
+              <div className="flex items-center gap-1 text-[10px] text-zinc-500 uppercase tracking-wider font-bold">
+                <CalendarBlank size={10} />
+                {formattedDate}
+              </div>
             </div>
-            <div className="flex">
-                <Link to={`/editarpostagem/${postagem.id}`} 
-                    className='w-full text-white bg-indigo-400 
-                    hover:bg-indigo-800 flex items-center justify-center py-2'>
-                    <button>Editar</button>
-                </Link>
-                <Link to={`/deletarpostagem/${postagem.id}`} 
-                    className='text-white bg-red-400 
-                    hover:bg-red-700 w-full flex items-center justify-center'>
-                    <button>Deletar</button>
-                </Link>
+          </div>
+          
+          {postagem.tema && (
+            <div className="px-2 py-1 rounded-md bg-white/5 border border-white/10 text-[10px] text-brand-cyan font-bold uppercase tracking-widest">
+              {postagem.tema.descricao}
             </div>
+          )}
         </div>
-    )
+
+        {/* Content */}
+        <div className="space-y-2">
+          <h3 className="text-xl font-bold text-zinc-100 group-hover:text-brand-violet transition-colors line-clamp-2">
+            {postagem.titulo}
+          </h3>
+          <p className="text-sm text-zinc-400 line-clamp-3 leading-relaxed">
+            {postagem.texto}
+          </p>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="p-4 flex gap-2 border-t border-white/5 bg-white/[0.02]">
+        <Link
+          to={`/editarpostagem/${postagem.id}`}
+          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold text-zinc-300 hover:text-white hover:bg-white/5 transition-all border border-transparent hover:border-white/10"
+        >
+          <Pencil size={14} />
+          Editar
+        </Link>
+        <Link
+          to={`/deletarpostagem/${postagem.id}`}
+          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20"
+        >
+          <Trash size={14} />
+          Deletar
+        </Link>
+      </div>
+    </motion.div>
+  );
 }
 
-export default CardPostagem
+export default CardPostagem;

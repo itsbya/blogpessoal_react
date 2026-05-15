@@ -1,194 +1,199 @@
-import { useEffect, useState, type ChangeEvent, type SyntheticEvent} from "react";
+import { useEffect, useState, type ChangeEvent, type SyntheticEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import type Usuario from "../../models/Usuario";
 import { cadastrarUsuario } from "../../services/Service";
+import { motion } from "framer-motion";
+import { User, EnvelopeSimple, Image, Lock, UserPlus, XCircle, CheckCircle } from "@phosphor-icons/react";
 import { ClipLoader } from "react-spinners";
 import { ToastAlerta } from "../../utils/ToastAlerta";
 
 function Cadastro() {
-
-  // Objeto responsável por redirecionar o usuário para uma outra rota
   const navigate = useNavigate();
-  
-  // Estado para controlar o Loader (animação de carregamento)
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  // Estado para confirmar a senha digitada pelo usuário
   const [confirmarSenha, setConfirmarSenha] = useState<string>("");
 
-  // Estado usuario para armazenar os dados do usuário que será cadastrado
   const [usuario, setUsuario] = useState<Usuario>({
     id: 0,
     nome: "",
     usuario: "",
     senha: "",
-    foto: ""
-  })
+    foto: "",
+  });
 
-  // useEffect que vai controlar o redirecionamento para a página de logina
-  // caso o cadastro seja bem sucedido
-  useEffect( () => {
-    if(usuario.id !== 0){
-      retornar()
+  useEffect(() => {
+    if (usuario.id !== 0) {
+      retornar();
     }
-  }, [usuario])
+  }, [usuario]);
 
-  // Função de atualização do estado usuario
-  function atualizarEstado(e: ChangeEvent<HTMLInputElement>){
+  function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {
     setUsuario({
       ...usuario,
-      [e.target.name]: e.target.value
-    })
+      [e.target.name]: e.target.value,
+    });
   }
 
-  // Função de atualização do estado confirmarSenha
-  function handleConfirmarSenha(e: ChangeEvent<HTMLInputElement>){
-    setConfirmarSenha(e.target.value)
+  function handleConfirmarSenha(e: ChangeEvent<HTMLInputElement>) {
+    setConfirmarSenha(e.target.value);
   }
 
-  // Função para enviar os dados para o Backend (Submit)
-  async function cadastrarNovoUsuario(e: SyntheticEvent<HTMLFormElement>){
-    
+  async function cadastrarNovoUsuario(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
-
     setIsLoading(true);
 
-    if(confirmarSenha === usuario.senha && usuario.senha.length >= 8){
-
-      try{
-
-        await cadastrarUsuario('/usuarios/cadastrar', usuario, setUsuario);
-
-        ToastAlerta('Usuário Cadastrado com sucesso!', 'sucesso');
-
-      }catch(error){
-        ToastAlerta('Erro ao cadastrar o usuário!', 'erro');
+    if (confirmarSenha === usuario.senha && usuario.senha.length >= 8) {
+      try {
+        await cadastrarUsuario("/usuarios/cadastrar", usuario, setUsuario);
+        ToastAlerta("Usuário Cadastrado com sucesso!", "sucesso");
+      } catch (error) {
+        ToastAlerta("Erro ao cadastrar o usuário!", "erro");
       }
-
-    }else{
-      ToastAlerta('Dados do usuário estão inconsistentes!', 'info');
-      setUsuario({
-        ...usuario,
-        senha: ''
-      });
-      setConfirmarSenha('');
+    } else {
+      ToastAlerta("Dados do usuário estão inconsistentes! Verifique a senha (mínimo 8 caracteres).", "info");
+      setUsuario({ ...usuario, senha: "" });
+      setConfirmarSenha("");
     }
-
-    setIsLoading(false)
+    setIsLoading(false);
   }
 
-  function retornar(){
-    navigate("/")
+  function retornar() {
+    navigate("/");
   }
-
-  console.log(JSON.stringify(usuario));
-  console.log(confirmarSenha);
 
   return (
-    <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 h-screen 
-            place-items-center font-bold">
-        <div
-          className="bg-[url('https://i.imgur.com/ZZFAmzo.jpg')] lg:block hidden bg-no-repeat 
-                    w-full min-h-screen bg-cover bg-center"
-        ></div>
-        <form className='flex justify-center items-center flex-col w-2/3 gap-3' 
-          onSubmit={cadastrarNovoUsuario}
-        >
-          <h2 className='text-slate-900 text-5xl'>Cadastrar</h2>
-          <div className="flex flex-col w-full">
-            <label htmlFor="nome">Nome</label>
-            <input
-              type="text"
-              id="nome"
-              name="nome"
-              placeholder="Nome"
-              className="border-2 border-slate-700 rounded p-2"
-              value={usuario.nome}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
-            />
+    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden py-20">
+      {/* Background Decorative Orbs */}
+      <div className="absolute top-1/4 -right-20 w-96 h-96 bg-brand-violet/20 blur-[120px] rounded-full" />
+      <div className="absolute bottom-1/4 -left-20 w-96 h-96 bg-brand-cyan/10 blur-[120px] rounded-full" />
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-2xl"
+      >
+        <div className="glass p-8 md:p-12 rounded-3xl shadow-2xl border-white/10">
+          <div className="text-center mb-10">
+            <h1 className="text-4xl font-bold font-display bg-gradient-to-r from-brand-violet to-brand-cyan bg-clip-text text-transparent inline-block">
+              Criar Conta
+            </h1>
+            <p className="text-zinc-400 mt-2">Junte-se à nossa comunidade tecnológica</p>
           </div>
-          <div className="flex flex-col w-full">
-            <label htmlFor="usuario">Usuario</label>
-            <input
-              type="text"
-              id="usuario"
-              name="usuario"
-              placeholder="Usuario"
-              className="border-2 border-slate-700 rounded p-2"
-              value={usuario.usuario}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <label htmlFor="foto">Foto</label>
-            <input
-              type="text"
-              id="foto"
-              name="foto"
-              placeholder="Foto"
-              className="border-2 border-slate-700 rounded p-2"
-              value={usuario.foto}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <label htmlFor="senha">Senha</label>
-            <input
-              type="password"
-              id="senha"
-              name="senha"
-              placeholder="Senha"
-              className="border-2 border-slate-700 rounded p-2"
-              value={usuario.senha}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <label htmlFor="confirmarSenha">Confirmar Senha</label>
-            <input
-              type="password"
-              id="confirmarSenha"
-              name="confirmarSenha"
-              placeholder="Confirmar Senha"
-              className="border-2 border-slate-700 rounded p-2"
-              value={confirmarSenha}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => handleConfirmarSenha(e)}
-            />
-          </div>
-          <div className="flex justify-around w-full gap-8">
-            <button 
-                type='reset'
-                className='rounded text-white bg-red-400 hover:bg-red-700 w-1/2 py-2'
+
+          <form onSubmit={cadastrarNovoUsuario} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label htmlFor="nome" className="text-sm font-medium text-zinc-300 ml-1">Nome Completo</label>
+              <div className="relative group">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-brand-violet transition-colors" size={20} />
+                <input
+                  type="text"
+                  id="nome"
+                  name="nome"
+                  placeholder="Seu nome"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-brand-violet/50 transition-all"
+                  value={usuario.nome}
+                  onChange={atualizarEstado}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="usuario" className="text-sm font-medium text-zinc-300 ml-1">E-mail (Usuário)</label>
+              <div className="relative group">
+                <EnvelopeSimple className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-brand-violet transition-colors" size={20} />
+                <input
+                  type="email"
+                  id="usuario"
+                  name="usuario"
+                  placeholder="email@provedor.com"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-brand-violet/50 transition-all"
+                  value={usuario.usuario}
+                  onChange={atualizarEstado}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <label htmlFor="foto" className="text-sm font-medium text-zinc-300 ml-1">URL da Foto de Perfil</label>
+              <div className="relative group">
+                <Image className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-brand-violet transition-colors" size={20} />
+                <input
+                  type="text"
+                  id="foto"
+                  name="foto"
+                  placeholder="https://imagem.com/foto.jpg"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-brand-violet/50 transition-all"
+                  value={usuario.foto}
+                  onChange={atualizarEstado}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="senha" className="text-sm font-medium text-zinc-300 ml-1">Senha (min. 8 caracteres)</label>
+              <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-brand-violet transition-colors" size={20} />
+                <input
+                  type="password"
+                  id="senha"
+                  name="senha"
+                  placeholder="••••••••"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-brand-violet/50 transition-all"
+                  value={usuario.senha}
+                  onChange={atualizarEstado}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="confirmarSenha" className="text-sm font-medium text-zinc-300 ml-1">Confirmar Senha</label>
+              <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-brand-violet transition-colors" size={20} />
+                <input
+                  type="password"
+                  id="confirmarSenha"
+                  name="confirmarSenha"
+                  placeholder="••••••••"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-brand-violet/50 transition-all"
+                  value={confirmarSenha}
+                  onChange={handleConfirmarSenha}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="md:col-span-2 flex flex-col sm:flex-row gap-4 mt-6">
+              <button
+                type="button"
                 onClick={retornar}
-             >
+                className="flex-1 btn-outline py-4 flex justify-center items-center gap-2"
+              >
+                <XCircle size={20} />
                 Cancelar
-            </button>
-            <button 
-                type='submit'
-                className='rounded text-white bg-indigo-400 
-                           hover:bg-indigo-900 w-1/2 py-2
-                           flex justify-center' 
-                >
-                {
-                  isLoading ?
-
-                    <ClipLoader
-                      color="#ffffff"
-                      size={24}
-                    />
-
-                  :
-
-                    <span>Cadastrar</span>
-
-                }
-            </button>
-          </div>
-        </form>
-      </div>
-    </>
-  )
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="flex-1 btn-primary py-4 flex justify-center items-center gap-2 disabled:opacity-70 group"
+              >
+                {isLoading ? (
+                  <ClipLoader color="#09090b" size={24} />
+                ) : (
+                  <>
+                    <CheckCircle size={20} className="group-hover:scale-110 transition-transform" />
+                    <span>Criar Conta</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </motion.div>
+    </div>
+  );
 }
 
-export default Cadastro
+export default Cadastro;

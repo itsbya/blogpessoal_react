@@ -6,78 +6,94 @@ import type Postagem from "../../../models/Postagem";
 import { buscar } from "../../../services/Service";
 import CardPostagem from "../cardpostagem/CardPostagem";
 import { ToastAlerta } from "../../../utils/ToastAlerta";
+import { motion } from "framer-motion";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 
 function ListaPostagens() {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [postagens, setPostagens] = useState<Postagem[]>([]);
+  const { usuario, handleLogout } = useContext(AuthContext);
+  const token = usuario.token;
 
-    const navigate = useNavigate();
-
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-
-    const [postagens, setPostagens] = useState<Postagem[]>([])
-
-    const { usuario, handleLogout } = useContext(AuthContext)
-    const token = usuario.token
-
-    useEffect(() => {
-        if (token === '') {
-            ToastAlerta('Você precisa estar logado!', 'info')
-            navigate('/')
-        }
-    }, [token])
-
-    useEffect(() => {
-        buscarPostagens()    
-    }, [postagens.length])
-
-    async function buscarPostagens() {
-        try {
-
-            setIsLoading(true)
-
-            await buscar('/postagens', setPostagens, {
-                headers: { Authorization: token }
-            })
-        } catch (error: any) {
-            if (error.toString().includes('401')) {
-                handleLogout()
-            }
-        }finally {
-            setIsLoading(false)
-        }
+  useEffect(() => {
+    if (token === "") {
+      ToastAlerta("Você precisa estar logado!", "info");
+      navigate("/");
     }
+  }, [token, navigate]);
 
-    return (
-        <>
+  useEffect(() => {
+    buscarPostagens();
+  }, [postagens.length]);
 
-            {isLoading && (
-                <div className="flex justify-center w-full my-8">
-                    <SyncLoader
-                        color="#312e81"
-                        size={32}
-                    />
-                </div>
-            )}
+  async function buscarPostagens() {
+    try {
+      setIsLoading(true);
+      await buscar("/postagens", setPostagens, {
+        headers: { Authorization: token },
+      });
+    } catch (error: any) {
+      if (error.toString().includes("401")) {
+        handleLogout();
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
-            <div className="flex justify-center w-full my-4">
-                <div className="container flex flex-col">
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
 
-                    {(!isLoading && postagens.length === 0) && (
-                            <span className="text-3xl text-center my-8">
-                                Nenhuma Postagem foi encontrada!
-                            </span>
-                    )}
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 },
+  };
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 
-                                    lg:grid-cols-3 gap-8">
-                            {
-                                postagens.map((postagem) => (
-                                    <CardPostagem key={postagem.id} postagem={postagem}/>
-                                ))
-                            }
-                    </div>
-                </div>
-            </div>
-        </>
-    )
+  return (
+    <>
+      {isLoading && (
+        <div className="flex flex-col items-center justify-center w-full min-h-[400px] gap-4">
+          <SyncLoader color="#a78bfa" size={15} margin={5} />
+          <p className="text-brand-violet font-medium animate-pulse">Carregando postagens...</p>
+        </div>
+      )}
+
+      {!isLoading && postagens.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col items-center justify-center w-full min-h-[400px] gap-4 text-zinc-500"
+        >
+          <MagnifyingGlass size={64} strokeWidth={1} />
+          <p className="text-xl font-medium">Nenhuma postagem encontrada</p>
+          <p className="text-sm">Seja o primeiro a compartilhar algo hoje!</p>
+        </motion.div>
+      )}
+
+      {!isLoading && postagens.length > 0 && (
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-12"
+        >
+          {postagens.map((postagem) => (
+            <motion.div key={postagem.id} variants={item}>
+              <CardPostagem postagem={postagem} />
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
+    </>
+  );
 }
-export default ListaPostagens;
+
+export default ListaPostagens;
