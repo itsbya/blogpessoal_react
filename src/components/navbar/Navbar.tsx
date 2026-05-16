@@ -46,7 +46,7 @@ function Navbar() {
             onClick={logout}
             className="flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-300 transition-colors cursor-pointer"
           >
-            <LogOut size={18} />
+            <SignOut size={18} />
             Sair
           </button>
         </div>
